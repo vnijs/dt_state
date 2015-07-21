@@ -1,2 +1,2 @@
 # dt_state
-maintain state of dt tabls
+maintain state of a dt table
