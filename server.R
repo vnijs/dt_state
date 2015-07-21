@@ -11,6 +11,7 @@ dat <- data.frame(
 ## store state in global environment for now
 if (!exists("r_state")) r_state <- list()
 
+## is this used? Only from a clean start
 r_state$dataviewer_search_columns <- list("","2...8","")
 
 shinyServer(function(input, output, session) {
