@@ -4,7 +4,9 @@ shinyUI(fluidPage(
       includeScript("www/js/jquery-ui.custom.min.js"),
       uiOutput("ui_view_vars"),
       tags$a(id = "refresh", href = "#", class = "action-button",
-             list(icon("refresh"), "Refresh"), onclick = "window.location.reload();")
+             list(icon("refresh"), "Refresh"),
+             # onclick = "window.location.reload();")
+             onclick = "dataviewer.state.clear(); window.location.reload();")
     ),
     mainPanel(
       tabPanel("View", DT::dataTableOutput("dataviewer"),
