@@ -47,8 +47,8 @@ shinyServer(function(input, output, session) {
   observeEvent(input$dataviewer_state, {
     isolate({
       r_state$dataviewer_state <<- input$dataviewer_state
-      print("r_state state")
-      print(r_state$dataviewer_state)
+      # print("r_state state")
+      # print(r_state$dataviewer_state)
     })
   })
 
@@ -59,17 +59,24 @@ shinyServer(function(input, output, session) {
 	output$dataviewer <- DT::renderDataTable({
 	  if (is.null(input$view_vars)) return()
 
+    # print(r_state$dataviewer_search_columns)
+    # print(r_state$dataviewer_state$search$search)
+    search <- r_state$dataviewer_state$search$search
+    if (is.null(search)) search <- ""
+
 		DT::datatable(dat[,input$view_vars],
 		  filter = list(position = "top"), rownames = FALSE,
 	    options = list(
 	      stateSave = TRUE,   ## maintains state but does not show column filter settings
 	      searchCols = lapply(r_state$dataviewer_search_columns, mknl),
-	      # search = list(search = r_state$dataviewer_search),
+        search = list(search = search),
 	      order = r_state$dataviewer_state$order,
 	      processing = FALSE
 	    )
-	  )
-	})
+      ## using callback as suggested in https://github.com/rstudio/DT/issues/146
+		  , callback = JS("$('a#refresh').on('click', function() { table.state.clear(); });")
+		)
+  })
 
 	## yihui example
 	# search = list(search = 'Ma'), order = list(list(2, 'asc'), list(1, 'desc'))
