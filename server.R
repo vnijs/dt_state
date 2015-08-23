@@ -78,6 +78,19 @@ shinyServer(function(input, output, session) {
 		)
   })
 
+  output$pivotr <- DT::renderDataTable({
+
+		DT::datatable(iris,
+		  filter = list(position = "top"), rownames = FALSE,
+	    options = list(
+	      stateSave = TRUE,   ## maintains state but does not show column filter settings
+	      processing = FALSE
+	    )
+      ## using callback as suggested in https://github.com/rstudio/DT/issues/146
+		  , callback = JS("$('a#refresh').on('click', function() { table.state.clear(); });")
+		)
+  })
+
 	## yihui example
 	# search = list(search = 'Ma'), order = list(list(2, 'asc'), list(1, 'desc'))
 
