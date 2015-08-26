@@ -24,33 +24,41 @@ shinyServer(function(input, output, session) {
 	                 options = list(plugins = list('remove_button', 'drag_drop')))
 	})
 
-	## make nested list
+
+	getdata <- reactive({
+	  if (input$apply_filter)
+	    iris[1:10,]
+	  else
+	    iris
+	})
+
+ 	## make nested list
 	mknl <- function(x) list(search = x)
 
   observeEvent(input$dataviewer_search_columns, {
     isolate({
       r_state$dataviewer_search_columns <<- input$dataviewer_search_columns
-      # print("r_state col search")
-      # print(r_state$dataviewer_search_columns)
     })
   })
-
-  ## doesn't seem needed if staveState = TRUE
-  # observeEvent(input$dataviewer_search, {
-  #   isolate({
-  #     r_state$dataviewer_search <<- input$dataviewer_search
-  #     print("r_state global search")
-  #     print(r_state$dataviewer_search)
-  #   })
-  # })
 
   observeEvent(input$dataviewer_state, {
     isolate({
       r_state$dataviewer_state <<- input$dataviewer_state
-      # print("r_state state")
-      # print(r_state$dataviewer_state)
     })
   })
+
+  observeEvent(input$pivotr_search_columns, {
+    isolate({
+      r_state$pivotr_search_columns <<- input$pivotr_search_columns
+    })
+  })
+
+  observeEvent(input$pivotr_state, {
+    isolate({
+      r_state$pivotr_state <<- input$pivotr_state
+    })
+  })
+
 
   observeEvent(input$refresh, {
     r_state <<- list()
@@ -80,10 +88,12 @@ shinyServer(function(input, output, session) {
 
   output$pivotr <- DT::renderDataTable({
 
-		DT::datatable(iris,
+		DT::datatable(getdata(),
 		  filter = list(position = "top"), rownames = FALSE,
 	    options = list(
 	      stateSave = TRUE,   ## maintains state but does not show column filter settings
+	      searchCols = lapply(r_state$pivotr_search_columns, mknl),
+	      order = r_state$pivotr_state$order,
 	      processing = FALSE
 	    )
       ## using callback as suggested in https://github.com/rstudio/DT/issues/146
