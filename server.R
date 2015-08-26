@@ -1,18 +1,20 @@
 library(shiny)
 library(DT)
 
-dat <- data.frame(
-         factor = as.factor(rep(c("A","B"),5)),
-         num = 1:10,
-         char = letters[1:10],
-         stringsAsFactors = FALSE
-       )
+# dat <- data.frame(
+#          factor = as.factor(rep(c("A","B"),5)),
+#          num = 1:10,
+#          char = letters[1:10],
+#          stringsAsFactors = FALSE
+#        )
+
+dat <- iris
 
 ## store state in global environment for now
 if (!exists("r_state")) r_state <- list()
 
 ## is this used? Only from a clean start
-r_state$dataviewer_search_columns <- list("","2...8","")
+# r_state$dataviewer_search_columns <- list("","2...8","")
 
 shinyServer(function(input, output, session) {
 	output$ui_view_vars <- renderUI({
@@ -27,9 +29,9 @@ shinyServer(function(input, output, session) {
 
 	getdata <- reactive({
 	  if (input$apply_filter)
-	    iris[1:10,]
+	    dat[1:10,]
 	  else
-	    iris
+	    dat
 	})
 
  	## make nested list
@@ -72,7 +74,8 @@ shinyServer(function(input, output, session) {
     search <- r_state$dataviewer_state$search$search
     if (is.null(search)) search <- ""
 
-		DT::datatable(dat[,input$view_vars],
+		# DT::datatable(dat[,input$view_vars],
+		DT::datatable(getdata()[,input$view_vars],
 		  filter = list(position = "top"), rownames = FALSE,
 	    options = list(
 	      stateSave = TRUE,   ## maintains state but does not show column filter settings
