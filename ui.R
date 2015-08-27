@@ -9,12 +9,10 @@ shinyUI(fluidPage(
              onclick = "window.location.reload();")
     ),
     mainPanel(
-      tabsetPanel(
         tabPanel("View", DT::dataTableOutput("dataviewer"),
                  verbatimTextOutput("tbl_col_search"),
                  verbatimTextOutput("tbl_global_search"),
-                 verbatimTextOutput("tbl_state")),
-        tabPanel("Pivot", DT::dataTableOutput("pivotr"))
+                 verbatimTextOutput("tbl_state")
       )
     )
   )

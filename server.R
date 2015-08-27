@@ -1,20 +1,13 @@
 library(shiny)
 library(DT)
 
-# dat <- data.frame(
-#          factor = as.factor(rep(c("A","B"),5)),
-#          num = 1:10,
-#          char = letters[1:10],
-#          stringsAsFactors = FALSE
-#        )
-
 dat <- iris
 
 ## store state in global environment for now
 if (!exists("r_state")) r_state <- list()
 
 ## is this used? Only from a clean start
-# r_state$dataviewer_search_columns <- list("","2...8","")
+r_state$dataviewer_search_columns <- list("","2.5...4","","","")
 
 shinyServer(function(input, output, session) {
 	output$ui_view_vars <- renderUI({
@@ -69,14 +62,11 @@ shinyServer(function(input, output, session) {
 	output$dataviewer <- DT::renderDataTable({
 	  if (is.null(input$view_vars)) return()
 
-    # print(r_state$dataviewer_search_columns)
-    # print(r_state$dataviewer_state$search$search)
     search <- r_state$dataviewer_state$search$search
     if (is.null(search)) search <- ""
 
-		# DT::datatable(dat[,input$view_vars],
 		DT::datatable(getdata()[,input$view_vars],
-		  filter = list(position = "top"), rownames = FALSE,
+		  filter = list(position = "top", clear = TRUE), rownames = FALSE,
 	    options = list(
 	      stateSave = TRUE,   ## maintains state but does not show column filter settings
 	      searchCols = lapply(r_state$dataviewer_search_columns, mknl),
@@ -85,27 +75,11 @@ shinyServer(function(input, output, session) {
 	      processing = FALSE
 	    )
       ## using callback as suggested in https://github.com/rstudio/DT/issues/146
-		  , callback = JS("$('a#refresh').on('click', function() { table.state.clear(); });")
+		  # , callback = JS("$('a#refresh').on('click', function() { table.state.clear(); });")
+      ## alternative callback that simplifies setting initial values
+		  , callback = DT::JS("$(window).unload(function() { table.state.clear(); })")
 		)
   })
-
-  output$pivotr <- DT::renderDataTable({
-
-		DT::datatable(getdata(),
-		  filter = list(position = "top"), rownames = FALSE,
-	    options = list(
-	      stateSave = TRUE,   ## maintains state but does not show column filter settings
-	      searchCols = lapply(r_state$pivotr_search_columns, mknl),
-	      order = r_state$pivotr_state$order,
-	      processing = FALSE
-	    )
-      ## using callback as suggested in https://github.com/rstudio/DT/issues/146
-		  , callback = JS("$('a#refresh').on('click', function() { table.state.clear(); });")
-		)
-  })
-
-	## yihui example
-	# search = list(search = 'Ma'), order = list(list(2, 'asc'), list(1, 'desc'))
 
   output$tbl_col_search <- renderPrint(input$dataviewer_search_columns)
   output$tbl_global_search <- renderPrint(input$dataviewer_search)
