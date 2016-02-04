@@ -19,52 +19,40 @@ shinyServer(function(input, output, session) {
 	                 options = list(plugins = list('remove_button', 'drag_drop')))
 	})
 
-# 	getdata <- reactive({
-# 	  if (input$apply_filter)
-# 	    dat[1:10,]
-# 	  else
-# 	    dat
-# 	})
-
  	## make nested list
 	mknl <- function(x) list(search = x)
 
-#   observeEvent(input$dataviewer_search_columns, {
-#     isolate({
-#       r_state$dataviewer_search_columns <<- input$dataviewer_search_columns
-#     })
-#   })
-#
-#   observeEvent(input$dataviewer_state, {
-#     isolate({
-#       r_state$dataviewer_state <<- input$dataviewer_state
-#     })
-#   })
+  observeEvent(input$dataviewer_search_columns, {
+    r_state$dataviewer_search_columns <<- input$dataviewer_search_columns
+  })
+
+  observeEvent(input$dataviewer_state, {
+    r_state$dataviewer_state <<- input$dataviewer_state
+  })
 
   observeEvent(input$refresh, {
     r_state <<- list()
   })
 
 	output$dataviewer <- DT::renderDataTable({
-	  if (is.null(input$view_vars)) return()
+	  req(input$view_vars)
 
     search <- r_state$dataviewer_state$search$search
     if (is.null(search)) search <- ""
 
-		# DT::datatable(getdata()[,input$view_vars],
 		DT::datatable(iris[,input$view_vars],
-		  filter = list(position = "top", clear = TRUE), rownames = FALSE,
+		  filter = list(position = "top", clear = TRUE),
+		  rownames = FALSE,
+		  selection = "none",
 	    options = list(
-	      # stateSave = TRUE,   ## maintains state but does not show column filter settings
-	      searchCols = lapply(r_state$dataviewer_search_columns, mknl)
-        # search = list(search = search),
-	      # order = r_state$dataviewer_state$order,
-	      # processing = FALSE
-	    )
-      ## using callback as suggested in https://github.com/rstudio/DT/issues/146
-		  # , callback = JS("$('a#refresh').on('click', function() { table.state.clear(); });")
-      ## alternative callback that simplifies setting initial values
-		  # , callback = DT::JS("$(window).unload(function() { table.state.clear(); })")
+	      stateSave = TRUE,
+	      searchCols = lapply(r_state$dataviewer_search_columns, mknl),
+        search = list(search = search, regex = TRUE),
+        order = {if (is.null(r_state$dataviewer_state$order)) list()
+          else r_state$dataviewer_state$order},
+	      processing = FALSE
+	    ),
+		  callback = DT::JS("$(window).unload(function() { table.state.clear(); })")
 		)
   })
 

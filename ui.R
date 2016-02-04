@@ -3,7 +3,6 @@ shinyUI(fluidPage(
     sidebarPanel(
       includeScript("www/js/jquery-ui.custom.min.js"),
       uiOutput("ui_view_vars"),
-      # checkboxInput("apply_filter", "Apply filter", FALSE),
       tags$a(id = "refresh", href = "#", class = "action-button",
              list(icon("refresh"), "Refresh"),
              onclick = "window.location.reload();")
