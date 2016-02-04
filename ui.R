@@ -1,7 +1,6 @@
 shinyUI(fluidPage(
   sidebarLayout(
     sidebarPanel(
-      includeScript("www/js/jquery-ui.custom.min.js"),
       uiOutput("ui_view_vars"),
       tags$a(id = "refresh", href = "#", class = "action-button",
              list(icon("refresh"), "Clear state"),

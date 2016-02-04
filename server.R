@@ -6,7 +6,7 @@ dat <- iris
 ## store state in global environment for now
 if (!exists("r_state")) r_state <- list()
 
-## is this used? Only from a clean start
+## Only used from a 'clean' start
 r_state$dataviewer_search_columns <- list("","2.5...4","","","[\"setosa\"]")
 
 shinyServer(function(input, output, session) {
