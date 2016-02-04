@@ -4,7 +4,7 @@ shinyUI(fluidPage(
       includeScript("www/js/jquery-ui.custom.min.js"),
       uiOutput("ui_view_vars"),
       tags$a(id = "refresh", href = "#", class = "action-button",
-             list(icon("refresh"), "Refresh"),
+             list(icon("refresh"), "Clear state"),
              onclick = "window.location.reload();")
     ),
     mainPanel(
